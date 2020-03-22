@@ -12,16 +12,25 @@ const Color BLUE = {COLOR_MIN, COLOR_MIN, COLOR_MAX, COLOR_MAX};
 const Color RED = {COLOR_MAX, COLOR_MIN, COLOR_MIN, COLOR_MAX};
 const int width = 256;
 const int height = 256;
-unsigned char rgba[width * width * 4], *p = rgba;
-void generateImage(const char *fileName)
+const int BYTE_SIZE = 4;
+unsigned char rgba[width * width * BYTE_SIZE], *p = rgba;
+const char *FILE_NAME = "output.png";
+void swap(int *a, int *b)
 {
-    FILE *fp = fopen(fileName, "wb");
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void generateImage()
+{
+    FILE *fp = fopen(FILE_NAME, "wb");
     svpng(fp, width, height, rgba, 1);
     fclose(fp);
 }
 void drawDot(int x, int y, Color color)
 {
-    int index = (x * width + y) * 4;
+
+    int index = ((height - y) * width + x + 1) * BYTE_SIZE;
     rgba[index] = color.r;
     rgba[index + 1] = color.g;
     rgba[index + 2] = color.b;
@@ -29,6 +38,19 @@ void drawDot(int x, int y, Color color)
 }
 void drawLine(int x0, int y0, int x1, int y1, Color color)
 {
+    if(x0 == x1){
+        if(y0 > y1){
+            swap(&y0,&y1);
+        }
+        for(int y = y0; y < y1;y++){
+            drawDot(x0, y, color);
+        }
+        return;
+    }
+    if(x0 > x1){
+        swap(&x0,&x1);
+        swap(&y0,&y1);
+    }
     float k = (y1 - y0) / (float)(x1 - x0);
     float b = y0 * 1.0 - k * x0;
     int y;
@@ -38,10 +60,9 @@ void drawLine(int x0, int y0, int x1, int y1, Color color)
         drawDot(x, y, color);
     }
 }
-void outPutImage(const char *fileName, Color background)
-{
-
-    unsigned x, y;
+void initImage(Color background){
+    unsigned x;
+    unsigned y;
     for (y = 0; y < width; y++)
     {
         for (x = 0; x < height; x++)
@@ -52,17 +73,22 @@ void outPutImage(const char *fileName, Color background)
             *p++ = background.a; /* A */
         }
     }
+}
+void outPutImage(Color background)
+{
+
+    initImage(background);
     // drawDot(0,0,RED);
     // drawDot(100,100,RED);
     drawLine(0, 0, 100, 200, BLUE);
     drawLine(0, 0, 100, 100, RED);
     drawLine(0, 0, 100, 50, WHITE);
-    generateImage(fileName);
+    drawLine(50, 0, 50, 200, BLUE);
+    generateImage();
 }
 
 int main(void)
 {
-    const char *output = "output.png";
-    outPutImage(output, BlACK);
+    outPutImage(BlACK);
     return 0;
 }
