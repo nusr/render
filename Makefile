@@ -1,6 +1,4 @@
 SYSCONF_LINK = gcc
-CPPFLAGS     =
-LDFLAGS      =
 OUT_PUT_IMAGE = output.png
 
 DESTDIR = ./
@@ -11,10 +9,13 @@ OBJECTS := $(patsubst %.c,%.o,$(wildcard *.c))
 all: $(DESTDIR)$(TARGET)
 
 $(DESTDIR)$(TARGET): $(OBJECTS)
-	$(SYSCONF_LINK) -Wall $(LDFLAGS) -o $(DESTDIR)$(TARGET) $(OBJECTS)
+	$(SYSCONF_LINK) -Wall -o $(DESTDIR)$(TARGET) $(OBJECTS)
 
 $(OBJECTS): %.o: %.c
-	$(SYSCONF_LINK) -Wall $(CPPFLAGS) -c $(CFLAGS) $< -o $@
+	$(SYSCONF_LINK) -Wall -c $(CFLAGS) $< -o $@
+
+test: all
+	time $(DESTDIR)$(TARGET)
 
 dev: clean all
 	-$(DESTDIR)$(TARGET)

@@ -17,3 +17,9 @@ make dev
 ```bash
 make clean
 ```
+
+## test
+
+```bash
+make test
+```
