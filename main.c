@@ -1,12 +1,8 @@
 #include "svpng.inc"
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct
-{
-    int r, g, b, a;
-} Color;
-const int COLOR_MAX = 255;
-const int COLOR_MIN = 0;
+#include "geometry.h"
+
 const Color WHITE = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
 const Color BlACK = {COLOR_MIN, COLOR_MIN, COLOR_MIN, COLOR_MAX};
 const Color BLUE = {COLOR_MIN, COLOR_MIN, COLOR_MAX, COLOR_MAX};
@@ -21,6 +17,13 @@ void swap(int *a, int *b)
     int temp = *a;
     *a = *b;
     *b = temp;
+}
+void readModel(const char * fileName){
+    FILE *fp = fopen(FILE_NAME, "r");
+    char buff[2000];
+    fgets(buff, 255, fp);
+    printf("%s\n", buff);
+    fclose(fp);
 }
 void generateImage()
 {
@@ -102,5 +105,6 @@ void outPutImage(Color background)
 int main(void)
 {
     outPutImage(BlACK);
+    // readModel("./obj/african_head.obj");
     return 0;
 }
